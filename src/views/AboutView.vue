@@ -408,10 +408,7 @@ export default {
       console.log("Arrastre iniciado");
       event.dataTransfer.effectAllowed = "move";
       event.dataTransfer.setData("text/plain", libro.id);
-    }
-
-
-
+    },
     startDrag(event, id) {
       console.log("Drag started");
       console.log(event);
