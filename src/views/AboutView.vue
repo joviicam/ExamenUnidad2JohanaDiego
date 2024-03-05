@@ -102,7 +102,6 @@
               <small class="text-muted">Publicado en {{ libro.fecha }}</small>
             </p>
           </b-card-text>
-          <b-button href="#" variant="primary">Ver detalles</b-button>
         </b-card>
       </div>
       <button class="btn btn-primary" v-b-modal.modal-create>
@@ -128,6 +127,9 @@
           text-align: center;
           background-color: brown;
         "
+        @drop="onDropDelete($event)"
+        @dragover.prevent
+        @dragenter.prevent
       >
         <p><i class="fas fa-plus"></i> Eliminar</p>
       </div>
@@ -176,7 +178,7 @@
           <b-form-input
             id="author-input"
             v-model="libroCreate.author"
-            :state="libroCreateState"
+            :state="authorCreateState"
             required
           ></b-form-input>
         </b-form-group>
@@ -212,36 +214,34 @@
       </form>
     </b-modal>
     <!-- MODAL ACTUALIZAR -->
-    <b-modal id="modal-prevent-closing" ref="modal-prevent-closing" title="Actualizar película" @show="resetModal"
+        <!-- Debe tener estos campos: Nombre de libro, autor, fecha de publicación, imagen de portada (opcional). -->
+
+    <b-modal id="modal-prevent-closing" ref="modal-prevent-closing" title="Actualizar libro" @show="resetModal"
             @hidden="resetModal" @ok="handleOk">
             <form ref="form" @submit.stop.prevent="handleSubmit">
                 <b-form-group label="Name" label-for="name-input" invalid-feedback="Name is required"
                     :state="nameUpdateState">
-                    <b-form-input id="name-input" v-model="peliculaUpdateName" :state="nameUpdateState"
+                    <b-form-input id="name-input" v-model="libroUpdateName" :state="nameUpdateState"
                         required></b-form-input>
                 </b-form-group>
-                <b-form-group label="Director" label-for="director-input" invalid-feedback="Director is required"
-                    :state="directorUpdateState">
-                    <b-form-input id="director-input" v-model="peliculaUpdateDirector" :state="directorUpdateState"
+                <b-form-group label="Author" label-for="author-input" invalid-feedback="Author is required"
+                    :state="authorUpdateState">
+                    <b-form-input id="author-input" v-model="libroUpdateAuthor" :state="authorUpdateState"
                         required></b-form-input>
                 </b-form-group>
-                <b-form-group label="Género" label-for="genre-input" invalid-feedback="Género is required"
-                    :state="genreUpdateState">
-                    <b-form-select id="genre-input" v-model="peliculaUpdateGenre" :state="genreUpdateState" required>
-                        <option v-for="genre in genres" :key="genre.idGenre" :value="genre.idGenre">{{ genre.name }}
-                        </option>
-                    </b-form-select>
-                </b-form-group>
-                <b-form-group label="Duración" label-for="duration-input" invalid-feedback="Duración is required"
-                    :state="durationUpdateState">
-                    <b-form-input id="duration-input" v-model="peliculaUpdateDuration" :state="durationUpdateState"
+                <b-form-group label="Fecha de estreno" label-for="fecha-input" invalid-feedback="Date is required"
+                    :state="dateUpdateState">
+                    <b-form-input id="fecha-input" v-model="libroUpdateDate" :state="dateUpdateState" type="date"
                         required></b-form-input>
                 </b-form-group>
-                <b-form-group label="Fechade estreno" label-for="fecha-input" invalid-feedback="Date is required"
-                    :state="fechaUpdateState">
-                    <b-form-input id="fecha-input" v-model="peliculaUpdateFecha" :state="fechaUpdateState" type="date"
-                        required></b-form-input>
+                <b-form-group label="Image" label-for="duration-input" invalid-feedback="Image is required"
+                    :state="imageUpdateState">
+                    <b-form-file id="duration-input" v-model="libroUpdateImage" :state="imageUpdateState"
+                        accept="image/*"></b-form-file>
+                    <b-form-invalid-feedback :state="imageUpdateState">Please select an image</b-form-invalid-feedback>
+
                 </b-form-group>
+                
             </form>
         </b-modal>
   </div>
@@ -263,6 +263,14 @@ export default {
       authorCreateState: null,
       dateCreateState: null,
       imageCreateState: null,
+      libroUpdateName: "",
+      libroUpdateAuthor: "",
+      libroUpdateDate: "",
+      libroUpdateImage: null,
+      nameUpdateState: null,
+      authorUpdateState: null,
+      dateUpdateState: null,
+      imageUpdateState: null,
       libros: [
         {
           id: 1,
@@ -319,6 +327,15 @@ export default {
         this.imageCreateState = this.$refs["form"].imageCreateState;
       }
     },
+    updateBook() {
+      //mostrar modal v-b-modal.modal-create
+      this.$refs["modal-prevent-closing"].show();
+    },
+    dropBook() {
+      //Eliminar libro
+      console.log("Eliminar libro");
+      this.libros.pop();
+    },
     resetModal() {
       this.libroCreate = {
         name: "",
@@ -335,8 +352,14 @@ export default {
     onDrop(event) {
       console.log("Soltado");
       console.log(event);
-      this.createMovieFromDrag();
+      this.updateBook();
     },
+    onDropDelete(event) {
+      console.log("Soltado");
+      console.log(event);
+      this.dropBook();
+    },
+
 
     startDrag(event) {
       console.log("Drag started");
