@@ -59,7 +59,7 @@
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
       <div class="col-6 col-md-6 col-lg-4" v-for="libro in libros" :key="libro.idBook" draggable
-        @dragstart="startDrag($event, libro.idBook)">
+        @dragstart="startDrag($event, libro.id)">
         <b-card :title="libro.titulo" :sub-title="libro.autor" :img-src="libro.imagen" img-alt="Image" img-top
           tag="article" style="max-width: 20rem" class="mb-2 card-animation">
           <b-card-text>
