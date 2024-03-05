@@ -43,13 +43,13 @@
       </p>
     </div>
     <header class="text-light text-center py-3" style="flex: 1 0 auto">
-      <button class="btn btn-primary" @click="$router.push('/consultar')">
+      <button class="btn btn-primary" @click="getBooksByAuthor()">
         Consultar por autor
       </button>
-      <button class="btn btn-primary" @click="$router.push('/consultar')">
+      <button class="btn btn-primary" @click="getBooksByReleaseDate()">
         Ordenar por fecha
       </button>
-      <button class="btn btn-primary" @click="$router.push('/consultar')">
+      <button class="btn btn-primary" @click="getBooksByImage()">
         Mostrar si tiene imagen
       </button>
 
@@ -184,9 +184,10 @@ export default {
       authorCreateState: null,
       dateCreateState: null,
       imageCreateState: null,
+      libroUpdateId: 0,
       libroUpdateName: "",
       libroUpdateAuthor: "",
-      libroUpdateDate: "",
+      libroUpdateDate: null,
       libroUpdateImage: null,
       nameUpdateState: null,
       authorUpdateState: null,
@@ -294,6 +295,7 @@ export default {
     },
     updateBook() {
       //mostrar modal v-b-modal.modal-create
+      this.getBook(this.idBook);
       this.$refs["modal-prevent-closing"].show();
     },
     dropBook(id) {
@@ -314,6 +316,82 @@ export default {
       this.imageCreateState = null;
     },
 
+    dateFormat(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate() + 1).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    },
+
+    mapBooks(books) {
+      return books.map((book) => {
+        return {
+          id: book.idBook,
+          titulo: book.name,
+          autor: book.author,
+          fecha: book.releaseDate,
+          imagen: book.image,
+        };
+      });
+    },
+
+    setBook(book) {
+      this.libroUpdateId = book.idBook;
+      this.libroUpdateName = book.name;
+      this.libroUpdateAuthor = book.author;
+      this.libroUpdateDate = this.dateFormat(new Date(book.releaseDate));
+      this.libroUpdateImage = book.image;
+    },
+
+    prepareBookToUpdate() {
+      return {
+        idBook: this.libroUpdateId,
+        name: this.libroUpdateName,
+        author: this.libroUpdateAuthor,
+        releaseDate: this.libroUpdateDate,
+        image: this.libroUpdateImage,
+      };
+    },
+
+    //api methods
+    async getBook(id) {
+      const response = await getBook(id);
+      this.setBook(response.data);
+      console.log(response.data);
+    },
+
+    async getBooks() {
+      const response = await getBooks();
+      this.libros = this.mapBooks(response.data);
+    },
+
+    async getBooksByAuthor() {
+      const response = await getBooksByAuthor();
+      this.libros = this.mapBooks(response.data);
+    },
+
+    async getBooksByImage() {
+      const response = await getBooksByImage();
+      this.libros = this.mapBooks(response.data);
+    },
+
+    async getBooksByReleaseDate() {
+      const response = await getBooksByReleaseDate();
+      this.libros = this.mapBooks(response.data);
+    },
+
+    async putBook(id, book) {
+      const response = await putBook(id, book);
+      this.getBooks();
+    },
+
+    async handleOk() {
+      console.log("Submit");
+      const book = this.prepareBookToUpdate();
+      await this.putBook(this.libroUpdateId, book);
+      this.$refs["modal-prevent-closing"].hide();
+    },
+
     onDrop(event) {
       console.log("Soltado");
       console.log(event);
@@ -332,6 +410,16 @@ export default {
       event.dataTransfer.setData("text/plain", libro.id);
     }
 
+
+
+    startDrag(event, id) {
+      console.log("Drag started");
+      console.log(event);
+      this.idBook = id;
+    },
+  },
+  mounted() {
+    this.getBooks();
   },
 };
 </script>
