@@ -59,7 +59,7 @@
 
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
       <div class="col-6 col-md-6 col-lg-4" v-for="libro in libros" :key="libro.idBook" draggable
-        @dragstart="startDrag($event, libro)">
+        @dragstart="startDrag($event, libro.idBook)">
         <b-card :title="libro.titulo" :sub-title="libro.autor" :img-src="libro.imagen" img-alt="Image" img-top
           tag="article" style="max-width: 20rem" class="mb-2">
           <b-card-text>
@@ -222,7 +222,9 @@ export default {
           fecha: "1943",
           imagen: "https://picsum.photos/1024/480/?image=55",
         },
+
       ],
+      idBook: 0,
     };
   },
   mounted() {
@@ -298,10 +300,10 @@ export default {
       this.getBook(this.idBook);
       this.$refs["modal-prevent-closing"].show();
     },
-    dropBook(id) {
+    dropBook() {
       //Eliminar libro
       console.log("Eliminar libro");
-      this.deleteBookById(id);
+      this.deleteBookById(this.idBook);
     },
     resetModal() {
       this.libroCreate = {
@@ -400,19 +402,13 @@ export default {
     onDropDelete(event) {
       console.log("Soltado");
       console.log(event);
-      const itemId = event.dataTransfer.getData("itemID");
-      console.log(itemId);
-      this.dropBook(itemId);
-    },
-    startDrag(event, libro) {
-      console.log("Arrastre iniciado");
-      event.dataTransfer.effectAllowed = "move";
-      event.dataTransfer.setData("text/plain", libro.id);
+      this.dropBook();
     },
     startDrag(event, id) {
       console.log("Drag started");
       console.log(event);
       this.idBook = id;
+      console.log(this.idBook);
     },
   },
   mounted() {
