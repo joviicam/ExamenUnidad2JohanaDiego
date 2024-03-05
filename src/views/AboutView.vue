@@ -61,7 +61,7 @@
       <div class="col-6 col-md-6 col-lg-4" v-for="libro in libros" :key="libro.idBook" draggable
         @dragstart="startDrag($event, libro.idBook)">
         <b-card :title="libro.titulo" :sub-title="libro.autor" :img-src="libro.imagen" img-alt="Image" img-top
-          tag="article" style="max-width: 20rem" class="mb-2">
+          tag="article" style="max-width: 20rem" class="mb-2 card-animation">
           <b-card-text>
             <p class="card-text">
               <small class="text-muted">Publicado en {{ libro.fecha }}</small>
@@ -229,6 +229,15 @@ export default {
   },
   mounted() {
     this.getBooks();
+    window.addEventListener('scroll', this.handleScroll);
+
+
+    this.$nextTick(() => {
+      this.handleScroll();
+    });
+  },
+  beforeDestroy() {
+    window.removeEventListener('scroll', this.handleScroll);
   },
   methods: {
     async getBooks() {
@@ -410,6 +419,22 @@ export default {
       this.idBook = id;
       console.log(this.idBook);
     },
+    handleScroll() {
+      const carousel = document.getElementById('carousel-1');
+      const rect = carousel.getBoundingClientRect();
+      const isCarouselVisible = rect.top < window.innerHeight && rect.bottom >= 0;
+      if (isCarouselVisible) {
+        carousel.style.opacity = 1;
+      } else {
+        carousel.style.opacity = 0;
+      }
+
+      const cards = document.querySelectorAll('.card-animation');
+      cards.forEach((card) => {
+        //Cargar la animación cuando al renderizar el componente
+        card.classList.add('visible');
+      });
+    },
   },
   mounted() {
     this.getBooks();
@@ -430,5 +455,16 @@ export default {
   height: 100%;
   font-style: italic;
   color: #000000;
+}
+
+.card-animation {
+  opacity: 0.5;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.card-animation.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 </style>
