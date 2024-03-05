@@ -211,6 +211,39 @@
         </b-form-group>
       </form>
     </b-modal>
+    <!-- MODAL ACTUALIZAR -->
+    <b-modal id="modal-prevent-closing" ref="modal-prevent-closing" title="Actualizar película" @show="resetModal"
+            @hidden="resetModal" @ok="handleOk">
+            <form ref="form" @submit.stop.prevent="handleSubmit">
+                <b-form-group label="Name" label-for="name-input" invalid-feedback="Name is required"
+                    :state="nameUpdateState">
+                    <b-form-input id="name-input" v-model="peliculaUpdateName" :state="nameUpdateState"
+                        required></b-form-input>
+                </b-form-group>
+                <b-form-group label="Director" label-for="director-input" invalid-feedback="Director is required"
+                    :state="directorUpdateState">
+                    <b-form-input id="director-input" v-model="peliculaUpdateDirector" :state="directorUpdateState"
+                        required></b-form-input>
+                </b-form-group>
+                <b-form-group label="Género" label-for="genre-input" invalid-feedback="Género is required"
+                    :state="genreUpdateState">
+                    <b-form-select id="genre-input" v-model="peliculaUpdateGenre" :state="genreUpdateState" required>
+                        <option v-for="genre in genres" :key="genre.idGenre" :value="genre.idGenre">{{ genre.name }}
+                        </option>
+                    </b-form-select>
+                </b-form-group>
+                <b-form-group label="Duración" label-for="duration-input" invalid-feedback="Duración is required"
+                    :state="durationUpdateState">
+                    <b-form-input id="duration-input" v-model="peliculaUpdateDuration" :state="durationUpdateState"
+                        required></b-form-input>
+                </b-form-group>
+                <b-form-group label="Fechade estreno" label-for="fecha-input" invalid-feedback="Date is required"
+                    :state="fechaUpdateState">
+                    <b-form-input id="fecha-input" v-model="peliculaUpdateFecha" :state="fechaUpdateState" type="date"
+                        required></b-form-input>
+                </b-form-group>
+            </form>
+        </b-modal>
   </div>
 </template>
 
