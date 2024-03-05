@@ -248,6 +248,16 @@
 </template>
 
 <script>
+import { 
+  getBooks, 
+  getBooksByAuthor, 
+  deleteBook, 
+  getBook, 
+  getBooksByImage, 
+  getBooksByReleaseDate,
+  postBook,
+  putBook 
+} from '../services/books';
 export default {
   data() {
     return {
